@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love Notes</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background: #fce4ec; }
+        h2 { color: #e91e63; }
+        textarea { width: 80%; padding: 10px; border-radius: 5px; border: 1px solid #e91e63; }
+        .save-btn { padding: 10px 20px; background: #e91e63; color: white; border: none; cursor: pointer; }
+        .save-btn:hover { background: #d81b60; }
+        .note-container { margin-top: 20px; text-align: left; display: inline-block; width: 80%; }
+        .note { background: white; padding: 10px; border-radius: 5px; margin: 5px 0; box-shadow: 0px 0px 5px #ccc; }
+    </style>
+</head>
+<body>
+
+    <h2>Write Short Note For Me <span class="span1">❤️</span></h2>
+
+    <!-- Netlify Form for automatic submission -->
+    <form name="love-notes" method="post" data-netlify="true" onsubmit="return saveNote(event)">
+        <textarea id="noteInput" name="msg" placeholder="Write something beautiful..." rows="4" required></textarea>
+        <br>
+        <button class="save-btn" type="submit">Save Note</button>
+    </form>
+
+    <div class="note-container" id="notesContainer"></div>
+
+    <script>
+        function saveNote(event) {
+            event.preventDefault(); // Prevents form refresh
+
+            let noteInput = document.getElementById("noteInput").value;
+            if (!noteInput.trim()) {
+                alert("Please write something beautiful first!");
+                return false;
+            }
+
+            // Save to Local Storage
+            let notes = JSON.parse(localStorage.getItem("notes")) || [];
+            notes.push(noteInput);
+            localStorage.setItem("notes", JSON.stringify(notes));
+
+            // Display the note
+            displayNotes();
+
+            // Clear input
+            document.getElementById("noteInput").value = "";
+
+            // Submit form programmatically to Netlify
+            document.forms["love-notes"].submit();
+        }
+
+        function displayNotes() {
+            let notesContainer = document.getElementById("notesContainer");
+            let notes = JSON.parse(localStorage.getItem("notes")) || [];
+            notesContainer.innerHTML = notes.map(note => `<p class="note">${note}</p>`).join("");
+        }
+
+        // Load Notes on Page Load
+        window.onload = displayNotes;
+    </script>
+
+</body>
+</html>
